@@ -1,4 +1,6 @@
 import bcrypt
+import datetime
+import uuid
 db = []
 
 
@@ -15,7 +17,8 @@ class User:
         self.db.append({
             'name':self.name,
             'email':self.email,
-            'password': self.password
+            'password': self.password,
+            "user_id": str(uuid.uuid4())
         })
 
     def get_user(self,username):
@@ -30,9 +33,10 @@ class User:
         self.db.pop(user)
 
     def update_user(self, user,field):
+        pass
 
 
-ben = User('benedict',"ben@gmail.com","asdfgh")
-ben.create_user()
+# ben = User('benedict',"ben@gmail.com","asdfgh")
+# ben.create_user()
 # print(ben.get_users())
-ben.login('benedict','asdfh')
+# ben.login('benedict','asdfh')
