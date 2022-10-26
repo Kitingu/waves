@@ -1,8 +1,8 @@
 from flask import request, jsonify, Blueprint
 import json
 from marshmallow import ValidationError
-
-from operator import itemgetter
+from config.config import Config
+import jwt, datetime
 from werkzeug.security import check_password_hash, generate_password_hash
 from app.models.user import User as UserModel
 from app.utils.validator import UserSchema, LoginSchema
@@ -26,7 +26,6 @@ def signup():
         hashed_password = generate_password_hash(password)
         newUser = UserModel(username, email, hashed_password)
         newUser.create_user()
-        print(newUser.get_users())
         return jsonify({"Message": "User registered successfully"}), 201
     except ValidationError as error:
         print('????????', error)
@@ -42,9 +41,14 @@ def login():
         password = login_details['password']
         user = UserModel.get_user('username', username)
         if user:
-            is_login = check_password_hash(user['password'], password)
-            return jsonify({"Message": "logged in"}), 200
-        return jsonify({"Message": "not logged in"}), 200
+            if check_password_hash(user['password'], password):
+                access_token = jwt.encode(
+                    {"email": user['email'], "exp": datetime.datetime.utcnow() +
+                                            datetime.timedelta(minutes=1)},
+                    Config.SECRET_KEY)
+                return jsonify({"access_token": access_token}), 200
+            return jsonify({"Message": "invalid login details"}), 400
+        return jsonify({"Message": "invalid login details, try again"}), 400
 
     except ValidationError as err:
         return jsonify({"Message": err.messages}), 400
