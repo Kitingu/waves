@@ -26,6 +26,9 @@ class UserSchema(Schema):
     password = password = fields.String(required=True, validate=validate_password)
 
 
+class LoginSchema(Schema):
+    username = fields.String(required=True)
+    password = fields.String(required=True)
 # def validator(schema, data):
 #     try:
 #         result = schema().load(data)

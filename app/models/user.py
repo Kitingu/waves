@@ -1,40 +1,42 @@
 import bcrypt
 import datetime
 import uuid
+
 db = []
 
 
 class User:
 
-    def __init__(self, name, email, password):
+    def __init__(self, username, email, password):
 
-        self.name = name
+        self.username = username
         self.email = email
         self.password = password
         self.db = db
 
     def create_user(self):
         self.db.append({
-            'name':self.name,
-            'email':self.email,
+            'username': self.username,
+            'email': self.email,
             'password': self.password,
             "user_id": str(uuid.uuid4())
         })
 
-    def get_user(self,username):
-        for user in self.db:
-            if user['name'] == username:
+    @staticmethod
+    def get_user(field,value):
+        for user in db:
+            if user[field] == value:
                 return user
 
-    def get_users(self):
-        return self.db
+    @staticmethod
+    def get_users():
+        return db
 
-    def delete_user(self,user):
+    def delete_user(self, user):
         self.db.pop(user)
 
-    def update_user(self, user,field):
+    def update_user(self, user, field):
         pass
-
 
 # ben = User('benedict',"ben@gmail.com","asdfgh")
 # ben.create_user()
