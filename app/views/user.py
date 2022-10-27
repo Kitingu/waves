@@ -28,7 +28,6 @@ def signup():
         newUser.create_user()
         return jsonify({"Message": "User registered successfully"}), 201
     except ValidationError as error:
-        print('????????', error)
         return jsonify({"Message": error.messages}), 400
 
 

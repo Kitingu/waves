@@ -29,22 +29,3 @@ class UserSchema(Schema):
 class LoginSchema(Schema):
     username = fields.String(required=True)
     password = fields.String(required=True)
-# def validator(schema, data):
-#     try:
-#         result = schema().load(data)
-#     except ValidationError as err:
-#        raise err
-
-
-error_types = ['username', 'email', 'password']
-user = {
-
-    "email": "asdf@gmail.com",
-    "password": "",
-}
-# result = UserSchema().load(data=user)
-# print(result)
-# try:
-#     result = UserSchema().load(user)
-# except ValidationError as err:
-#     print(err.messages)
