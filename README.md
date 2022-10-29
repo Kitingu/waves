@@ -1,5 +1,8 @@
 This is a simple flask application to server as a python refresher.
 
+[![Build Status](https://app.travis-ci.com/Kitingu/waves.svg?branch=main)](https://app.travis-ci.com/Kitingu/waves)
+[![Coverage Status](https://coveralls.io/repos/github/Kitingu/waves/badge.svg?branch=main)](https://coveralls.io/github/Kitingu/waves?branch=main)
+[![Maintainability](https://api.codeclimate.com/v1/badges/336123c7e9aecf290d86/maintainability)](https://codeclimate.com/github/Kitingu/waves/maintainability)
 ## set up ##
  * Clone this repo to your device
  * change directory to the applications root folder
