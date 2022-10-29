@@ -15,3 +15,4 @@ class TestApp(unittest.TestCase):
     def test_app(self):
         resp = self.client.get('/')
         self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.data.decode(),"Hello World!")

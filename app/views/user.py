@@ -6,13 +6,14 @@ import jwt, datetime
 from werkzeug.security import check_password_hash, generate_password_hash
 from app.models.user import User as UserModel
 from app.utils.validator import UserSchema, LoginSchema
+from app.utils.auth import token_required
 
 auth = Blueprint('auth', __name__)
 
 
 @auth.route('/')
 def hello_world():  # put application's code here
-    return 'Hello World!'
+    return 'Hello World!', 200
 
 
 @auth.route("/signup", methods=['POST'])
@@ -42,9 +43,7 @@ def login():
         if user:
             if check_password_hash(user['password'], password):
                 access_token = jwt.encode(
-                    {"email": user['email'], "exp": datetime.datetime.utcnow() +
-                                            datetime.timedelta(minutes=1)},
-                    Config.SECRET_KEY)
+                    {"email": user['email']},key=Config.SECRET_KEY, algorithm='HS256')
                 return jsonify({"access_token": access_token}), 200
             return jsonify({"Message": "invalid login details"}), 400
         return jsonify({"Message": "invalid login details, try again"}), 400
@@ -54,6 +53,7 @@ def login():
 
 
 @auth.route('/users', methods=['GET'])
+@token_required
 def get_users():  # put application's code here
     users = UserModel.get_users()
     return jsonify({
