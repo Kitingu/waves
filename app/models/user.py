@@ -1,5 +1,5 @@
 import bcrypt
-import datetime
+from datetime import date
 import uuid
 
 db = []
@@ -12,18 +12,19 @@ class User:
         self.username = username
         self.email = email
         self.password = password
-        self.db = db
+        self.date_created= date.today().strftime("%d/%m/%Y")
 
     def create_user(self):
-        self.db.append({
+        db.append({
             'username': self.username,
             'email': self.email,
             'password': self.password,
-            "user_id": str(uuid.uuid4())
+            "user_id": str(uuid.uuid4()),
+            "date_created":self.date_created
         })
 
-    @staticmethod
-    def get_user(field,value):
+    @classmethod
+    def get_user(cls,field, value):
         for user in db:
             if user[field] == value:
                 return user
@@ -32,8 +33,9 @@ class User:
     def get_users():
         return db
 
-    def delete_user(self, user):
-        self.db.pop(user)
+    @staticmethod
+    def delete_user(user):
+        db.pop(user)
 
     def update_user(self, user, field):
         pass

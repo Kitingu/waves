@@ -1,12 +1,10 @@
 from flask import request, jsonify, Blueprint
-import json
 from marshmallow import ValidationError
-from config.config import Config
-import jwt, datetime
+from flask_jwt_extended import create_access_token
 from werkzeug.security import check_password_hash, generate_password_hash
 from app.models.user import User as UserModel
 from app.utils.validator import UserSchema, LoginSchema
-from app.utils.auth import token_required
+from flask_jwt_extended import jwt_required
 
 auth = Blueprint('auth', __name__)
 
@@ -24,10 +22,13 @@ def signup():
         username = user['username']
         password = user['password']
         email = user['email']
-        hashed_password = generate_password_hash(password)
-        newUser = UserModel(username, email, hashed_password)
-        newUser.create_user()
-        return jsonify({"Message": "User registered successfully"}), 201
+        user_exists=UserModel.get_user("email",email)
+        if not user_exists:
+            hashed_password = generate_password_hash(password)
+            newUser = UserModel(username, email, hashed_password)
+            newUser.create_user()
+            return jsonify({"Message": "User registered successfully"}), 201
+        return jsonify({"Message": "User already exists"}), 409
     except ValidationError as error:
         return jsonify({"Message": error.messages}), 400
 
@@ -42,8 +43,7 @@ def login():
         user = UserModel.get_user('username', username)
         if user:
             if check_password_hash(user['password'], password):
-                access_token = jwt.encode(
-                    {"email": user['email']},key=Config.SECRET_KEY, algorithm='HS256')
+                access_token = create_access_token(identity=username)
                 return jsonify({"access_token": access_token}), 200
             return jsonify({"Message": "invalid login details"}), 400
         return jsonify({"Message": "invalid login details, try again"}), 400
@@ -53,9 +53,9 @@ def login():
 
 
 @auth.route('/users', methods=['GET'])
-@token_required
+@jwt_required
 def get_users():  # put application's code here
     users = UserModel.get_users()
     return jsonify({
-
+        "message":users
     })

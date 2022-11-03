@@ -29,3 +29,9 @@ class UserSchema(Schema):
 class LoginSchema(Schema):
     username = fields.String(required=True)
     password = fields.String(required=True)
+
+class WaveSchema(Schema):
+    title= fields.String(required=True)
+    details =fields.String(required=True)
+    user = fields.String()
+    category =fields.String()
