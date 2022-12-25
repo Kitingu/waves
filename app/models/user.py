@@ -15,13 +15,21 @@ class User:
         self.date_created= date.today().strftime("%d/%m/%Y")
 
     def create_user(self):
-        db.append({
+        user = {
             'username': self.username,
             'email': self.email,
             'password': self.password,
             "user_id": str(uuid.uuid4()),
             "date_created":self.date_created
-        })
+        }
+        db.append(user)
+        return {
+            'username': user['username'],
+            'email': user['email'],
+            'user_id': user['user_id'],
+            'date_created': user['date_created']
+
+        }
 
     @classmethod
     def get_user(cls,field, value):

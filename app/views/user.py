@@ -26,8 +26,9 @@ def signup():
         if not user_exists:
             hashed_password = generate_password_hash(password)
             newUser = UserModel(username, email, hashed_password)
-            newUser.create_user()
-            return jsonify({"Message": "User registered successfully"}), 201
+            serializedUser = newUser.create_user()
+            return jsonify({"Message": "User registered successfully",
+                            "user":serializedUser}), 201
         return jsonify({"Message": "User already exists"}), 409
     except ValidationError as error:
         return jsonify({"Message": error.messages}), 400
