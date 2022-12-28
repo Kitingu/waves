@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
+import json
 
 load_dotenv()
 db = SQLAlchemy()
@@ -48,18 +49,31 @@ class User(db.Model):
             db.session.rollback()
 
     # get all users
-    def get_users(self):
-        users = db.session.execute(db.select(User).order_by(User.username)).scalars()
+    @classmethod
+    def get_users(cls):
+        users = cls.query.all()
         return users
 
     # get a user by id
     @classmethod
-    def get_user(cls, field,value):
-        user = db.session.execute(db.select(User).filter_by(**{field: value})).scalars().first()
+    def get_user(cls, field, value):
+        user = cls.query.filter_by(**{field: value}).first()
+        print("user", type(user), user)
         return user
 
     # get a user by id
     @classmethod
     def get_user_by_id(cls, user_id):
-        user = User.query.filter_by(user_id=user_id).first()
+        user = cls.query.filter_by(user_id=user_id).first()
         return user
+
+    # update a user
+    @classmethod
+    def update_user(cls, user_id, data):
+        user = cls.query.filter_by(user_id=user_id).first()
+        if user:
+            for key, value in data.items():
+                setattr(user, key, value)
+            db.session.commit()
+            return user
+        return False

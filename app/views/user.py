@@ -49,9 +49,9 @@ def login():
         LoginSchema().load(login_details)
         username = login_details['username']
         password = login_details['password']
-        user = UserModel.get_user('username', username)
+        user = UserModel.get_user('username', username) or UserModel.get_user('email', username)
         if user:
-            if check_password_hash(user['password'], password):
+            if check_password_hash(user.password, password):
                 access_token = create_access_token(identity=username)
                 return jsonify({"access_token": access_token}), 200
             return jsonify({"Message": "invalid login details"}), 400
@@ -62,9 +62,17 @@ def login():
 
 
 @auth.route('/users', methods=['GET'])
-@jwt_required
-def get_users():  # put application's code here
+@jwt_required()
+def get_users():
     users = UserModel.get_users()
-    return jsonify({
-        "message": users
-    })
+    serialized_users = []
+    for user in users:
+        serialized_user = {
+            "username": user.username,
+            "email": user.email,
+            "user_id": user.user_id,
+            "date_created": user.date_created,
+            "is_admin": user.is_admin
+        }
+        serialized_users.append(serialized_user)
+    return jsonify({"users": serialized_users}), 200
