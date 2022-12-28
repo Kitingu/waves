@@ -20,7 +20,7 @@ def token_required(f):
 
         try:
             jwt.decode(token,key= Config.SECRET_KEY,algorithms=["HS256"], )
-        except():
+        except:
             return jsonify({"message": "Please, provide a valid token."}), 401
         return f(*args, **kwargs)
 
