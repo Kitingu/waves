@@ -3,7 +3,7 @@ from app.utils.validator import WaveSchema
 from flask import request, jsonify, Blueprint
 from marshmallow import ValidationError
 from flask_jwt_extended import get_jwt_identity, jwt_required
-
+from datetime import date
 wave = Blueprint('wave', __name__)
 
 
@@ -13,12 +13,11 @@ def create_wave():
     new_wave = request.get_json()
     try:
         WaveSchema().load(new_wave)
-        wave_title = new_wave['title']
-        wave_detail = new_wave['details']
+        title = new_wave['title']
+        description = new_wave['description']
         user = get_jwt_identity()
-        print(user)
         category = new_wave['category']
-        wavy = WaveModel(wave_title, wave_detail, user, category)
+        wavy = WaveModel(title, description, category,user_id=user, date_created=date.today().strftime("%d/%m/%Y"))
         wavy.create_wave()
         return jsonify({
             'message': 'wave created successfully'
@@ -32,6 +31,7 @@ def create_wave():
 @jwt_required()
 def get_waves():
     waves = WaveModel.get_waves()
+    serialized_waves = WaveSchema(many=True,exclude=["user"]).dump(waves)
     return jsonify(
-        {"message": waves}
+        {"message": serialized_waves}
     )

@@ -4,6 +4,8 @@ python:
 env:
   - FLASK_ENV=development
   - SECRET_KEY=asdfghjkjbgd
+services:
+  - postgresql
 
 # command to install dependencies
 install:

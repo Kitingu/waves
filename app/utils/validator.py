@@ -24,6 +24,10 @@ class UserSchema(Schema):
     username = fields.String(required=True, )
     email = fields.Email(required=True)
     password = password = fields.String(required=True, validate=validate_password)
+    user_id = fields.String()
+    date_created = fields.String()
+    is_admin = fields.String()
+
 
 
 class LoginSchema(Schema):
@@ -32,6 +36,9 @@ class LoginSchema(Schema):
 
 class WaveSchema(Schema):
     title= fields.String(required=True)
-    details =fields.String(required=True)
+    description = fields.String(required=True)
     user = fields.String()
     category =fields.String()
+    date_created = fields.String()
+    wave_id = fields.String()
+

@@ -34,7 +34,8 @@ def signup():
         hashed_password = generate_password_hash(password)
         newUser = UserModel(username=username, email=email, password=hashed_password, user_id=str(uuid.uuid4()),
                             date_created=date.today().strftime("%d/%m/%Y"), is_admin="False")
-        serialized_user = newUser.create_user()
+        newUser.create_user()
+        serialized_user = UserSchema(exclude=["password"]).dump(newUser)
         return jsonify({"Message": "User registered successfully",
                         "user": serialized_user}), 201
 
@@ -52,7 +53,7 @@ def login():
         user = UserModel.get_user('username', username) or UserModel.get_user('email', username)
         if user:
             if check_password_hash(user.password, password):
-                access_token = create_access_token(identity=username)
+                access_token = create_access_token(identity=user.user_id)
                 return jsonify({"access_token": access_token}), 200
             return jsonify({"Message": "invalid login details"}), 400
         return jsonify({"Message": "invalid login details, try again"}), 400

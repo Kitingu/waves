@@ -1,9 +1,7 @@
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 import json
-
-load_dotenv()
-db = SQLAlchemy()
+from app import db
 
 
 # User Model class
@@ -16,6 +14,7 @@ class User(db.Model):
     user_id = db.Column(db.String(60), unique=True, nullable=False)
     date_created = db.Column(db.String(60), nullable=False)
     is_admin = db.Column(db.String(60), default=False, nullable=False)
+    waves = db.relationship('Wave', backref='user', lazy=True)
 
     # initialize the class
     def __init__(self, username, email, password, user_id, date_created, is_admin):
@@ -36,14 +35,7 @@ class User(db.Model):
                         date_created=self.date_created, is_admin=self.is_admin)
             db.session.add(user)
             db.session.commit()
-            serialized_user = {
-                "username": user.username,
-                "email": user.email,
-                "user_id": user.user_id,
-                "date_created": user.date_created,
-                "is_admin": user.is_admin
-            }
-            return serialized_user
+            return user
         except Exception as e:
             print("exception", e)
             db.session.rollback()
