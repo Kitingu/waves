@@ -2,10 +2,15 @@ language: python
 python:
   - "3.9"
 env:
-  - FLASK_ENV=development
   - SECRET_KEY=asdfghjkjbgd
+  - DATABASE_URI="postgres://postgres:postgres@localhost:5432/DEMODB"
+  - TESTDB_URI="postgres://postgres:postgres@localhost:5432/demodb"
 services:
   - postgresql
+
+before_script:
+ - psql -c 'create database demodb;' -U postgres
+ - export FLASK_ENV=testing
 
 # command to install dependencies
 install:

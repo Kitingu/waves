@@ -6,7 +6,7 @@ from app.models.user import User as UserModel
 from app.utils.validator import UserSchema, LoginSchema
 from flask_jwt_extended import jwt_required
 import uuid
-from datetime import date
+from datetime import datetime
 
 auth = Blueprint('auth', __name__)
 
@@ -33,7 +33,7 @@ def signup():
 
         hashed_password = generate_password_hash(password)
         newUser = UserModel(username=username, email=email, password=hashed_password, user_id=str(uuid.uuid4()),
-                            date_created=date.today().strftime("%d/%m/%Y"), is_admin="False")
+                            date_created=datetime.now(), is_admin="False")
         newUser.create_user()
         serialized_user = UserSchema(exclude=["password"]).dump(newUser)
         return jsonify({"Message": "User registered successfully",
@@ -66,14 +66,5 @@ def login():
 @jwt_required()
 def get_users():
     users = UserModel.get_users()
-    serialized_users = []
-    for user in users:
-        serialized_user = {
-            "username": user.username,
-            "email": user.email,
-            "user_id": user.user_id,
-            "date_created": user.date_created,
-            "is_admin": user.is_admin
-        }
-        serialized_users.append(serialized_user)
+    serialized_users = UserSchema(many=True, exclude=["password"]).dump(users)
     return jsonify({"users": serialized_users}), 200

@@ -6,35 +6,37 @@ from flask_jwt_extended import JWTManager
 import os
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
-
-
-
-
 load_dotenv()
-db_uri = os.getenv('DB_URL')
-print("db_uri", db_uri)
 
+config_name = os.getenv("FLASK_ENV")
+db_uri = os.getenv('DATABASE_URI')
+db = SQLAlchemy()
 
-app = Flask(__name__)
-cors = CORS(app)
+def create_app(config_name):
+    app = Flask(__name__,instance_relative_config=True)
+    cors = CORS(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config.from_object(Config)
+    db.init_app(app)
 
-from .models.user import User
-from .models.wave import Wave
-from app.views.user import auth
-from app.views.wave import wave
+    # prevent circular imports by importing here
+    from .models.user import User
+    from .models.wave import Wave
+    from app.views.user import auth
+    from app.views.wave import wave
 
-with app.app_context():
-    print("creating tables")
-    db.create_all()
-    db.session.commit()
+    # create tables if they don't exist yet
+    with app.app_context():
+        print("creating tables")
+        db.create_all()
+        db.session.commit()
 
-jwt = JWTManager(app)
-app.config["JWT_SECRET_KEY"] = Config.SECRET_KEY
+    jwt = JWTManager(app)
+    app.config["JWT_SECRET_KEY"] = Config.SECRET_KEY
 
-'''registering the routes to blueprints'''
-app.register_blueprint(auth)
-app.register_blueprint(wave)
+    '''registering the routes to blueprints'''
+    app.register_blueprint(auth)
+    app.register_blueprint(wave)
+    return app

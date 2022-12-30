@@ -1,15 +1,22 @@
 import unittest, json
-from app import app
-from app.models.user import db as user_db
-from app.models.wave import waves_db
+from app import create_app
+from config.config import app_config
+from flask import current_app
 
+from app import db
 
 class TestApp(unittest.TestCase):
 
     def setUp(self):
-        self.ctx = app.app_context()
-        self.ctx.push()
-        self.client = app.test_client()
+        config_name = "testing"
+        self.app = create_app(app_config[config_name])
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        db.create_all()
+        self.client = self.app.test_client()
+        
+            
+
         self.test_user = {
             "username": "benedict",
             "email": "ben@gmail.com",
@@ -43,9 +50,10 @@ class TestApp(unittest.TestCase):
         self.assertEqual(resp.data.decode(), "Hello World!")
 
     def tearDown(self):
-        self.ctx.pop()
-        waves_db.clear()
-        user_db.clear()
+        db.session.remove()
+        db.drop_all()
+        self.app_context.pop()
+
 
 if(__name__ == "__main__"):
     unittest.main(verbosity=2)

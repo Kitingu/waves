@@ -6,9 +6,6 @@ class Config(object):
     SECRET_KEY = os.getenv('SECRET_KEY') or "asdfg"
     DATABASE_URI=os.getenv('DATABASE_URI')
     PROPAGATE_EXCEPTIONS=True
-    MAILGUN_API_URL =os.getenv('MAILGUN_API_URL')
-    MAILGUN_API_KEY=os.getenv('MAILGUN_API_KEY')
-
 class DevelopmentConfig(Config):
     """Configurations for Development."""
     DEBUG = True
