@@ -3,13 +3,15 @@ python:
   - "3.9"
 env:
   - SECRET_KEY=asdfghjkjbgd
-  - DATABASE_URI="postgres://postgres:postgres@localhost:5432/DEMODB"
-  - TESTDB_URI="postgres://postgres:postgres@localhost:5432/demodb"
+  - DATABASE_URI= "postgresql://postgres:postgres@localhost:5432/demodb"
 services:
   - postgresql
 
 before_script:
  - psql -c 'create database demodb;' -U postgres
+
+ - export DATABASE_URI="postgresql://postgres:postgres@localhost:5432/demodb"
+ - export TESTDB_URI="postgresql://postgres:postgres@localhost:5432/demodb"
  - export FLASK_ENV=testing
 
 # command to install dependencies

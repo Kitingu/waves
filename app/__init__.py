@@ -10,6 +10,8 @@ load_dotenv()
 
 config_name = os.getenv("FLASK_ENV")
 db_uri = os.getenv('DATABASE_URI')
+if(config_name == "testing"):
+    db_uri = os.getenv('TESTDB_URI')
 db = SQLAlchemy()
 
 def create_app(config_name):

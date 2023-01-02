@@ -2,14 +2,13 @@ import unittest, json
 from app import create_app
 from config.config import app_config
 from flask import current_app
-
 from app import db
+
 
 class TestApp(unittest.TestCase):
 
     def setUp(self):
-        config_name = "testing"
-        self.app = create_app(app_config[config_name])
+        self.app = create_app(app_config["testing"])
         self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()
@@ -50,9 +49,10 @@ class TestApp(unittest.TestCase):
         self.assertEqual(resp.data.decode(), "Hello World!")
 
     def tearDown(self):
-        db.session.remove()
-        db.drop_all()
-        self.app_context.pop()
+        # db.drop_all()
+        # db.session.remove()
+        # self.app_context.pop()
+        pass
 
 
 if(__name__ == "__main__"):
